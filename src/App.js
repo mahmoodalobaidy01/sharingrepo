@@ -1,25 +1,29 @@
-import logo from './logo.svg';
-import './App.css';
+import Login from "./pages/login";
+import { Authcontext } from "./context/authcontext";
+import { Switch, Route } from "react-router-dom";
+import "./App.css";
+import { useContext } from "react";
+import Authors from "./pages/authors";
+import Home from "./pages/home";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const { isAuth } = useContext(Authcontext);
+  let routes;
+  if (!isAuth) {
+    routes = <Login />;
+  } else {
+    routes = (
+      <Switch>
+        <Route path="/home">
+          <Home />
+        </Route>
+        <Route path="/authors">
+          <Authors />
+        </Route>
+      </Switch>
+    );
+  }
+  return <div className="App">{routes}</div>;
 }
 
 export default App;
