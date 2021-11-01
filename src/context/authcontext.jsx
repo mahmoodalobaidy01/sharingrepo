@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
 export const Authcontext = createContext({});
 
 const AuthProvider = (props) => {
@@ -6,8 +6,6 @@ const AuthProvider = (props) => {
   const [user, setUser] = useState({});
 
   const login = async (user) => {
-    setIsAuth(false);
-    setUser({});
     setUser(user);
     setIsAuth(true);
     await localStorage.setItem("user", JSON.stringify(user));
@@ -17,6 +15,10 @@ const AuthProvider = (props) => {
     setUser({});
     localStorage.removeItem("user");
   };
+  useEffect(() => {
+    const user = localStorage.getItem("user");
+    setUser(user);
+  });
   return (
     <Authcontext.Provider value={{ login, logout, isAuth, user }}>
       {props.children}

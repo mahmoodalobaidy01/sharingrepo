@@ -4,7 +4,6 @@ import { Switch, Route } from "react-router-dom";
 import "./App.css";
 import { useContext } from "react";
 import Authors from "./pages/authors";
-import Home from "./pages/home";
 
 function App() {
   const { isAuth } = useContext(Authcontext);
@@ -14,9 +13,6 @@ function App() {
   } else {
     routes = (
       <Switch>
-        <Route path="/home">
-          <Home />
-        </Route>
         <Route path="/authors">
           <Authors />
         </Route>
