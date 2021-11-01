@@ -29,8 +29,8 @@ const Login = () => {
       return;
     }
     api
-      .post(`/auth/signin`, {
-        username: email,
+      .post(`/login`, {
+        email: email,
         password: password,
       })
       .then((response) => {

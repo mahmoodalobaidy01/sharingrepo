@@ -1,5 +1,5 @@
 import axios from "axios";
 const api = axios;
-api.defaults.baseURL = "https://fikrebootcamp2.herokuapp.com/";
+api.defaults.baseURL = "http://localhost:5500/";
 
 export default api;

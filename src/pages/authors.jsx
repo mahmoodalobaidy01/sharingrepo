@@ -7,12 +7,17 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { useState, useEffect } from "react";
+import { Authcontext } from "../context/authcontext";
+import { useState, useEffect, useContext } from "react";
 import api from "./api/axios";
-import { AuthProvider } from "./AuthProvider";
+import AuthorForm from "../components/authorform";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { IconButton } from "@material-ui/core";
+import Button from "@mui/material/Button";
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
+function createData(name, id, age) {
+  return { name, id, age };
 }
 
 const rows = [
@@ -24,48 +29,96 @@ const rows = [
 ];
 
 const Authors = () => {
+  const [authorFormDialogStatus, setAuthorFromDialogStatus] = useState(false);
+  const [authorToEdit, setauthorToEdit] = useState(undefined);
   const [authors, setAuthors] = useState([]);
+  const authProvider = useContext(Authcontext);
+
   React.useEffect(() => {
     api
       .get("/authors", {
-        Headers: { Authorization: "Bearer" + authProvider.user.token },
+        headers: { Authorization: "Bearer " + authProvider.user.token },
       })
       .then(({ data }) => {
+        console.log(data, authProvider.user.token);
         setAuthors(data);
       })
       .catch((err) => {});
   }, []);
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Dessert (100g serving)</TableCell>
-            <TableCell align="right">Calories</TableCell>
-            <TableCell align="right">Fat&nbsp;(g)</TableCell>
-            <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-            <TableCell align="right">Protein&nbsp;(g)</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.name}
-              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            >
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.protein}</TableCell>
+    <div>
+      <h1>AUTHORS</h1>
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={() => {
+          setauthorToEdit(null);
+          setAuthorFromDialogStatus(true);
+        }}
+      >
+        ADD AUTHOR
+      </Button>
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>author</TableCell>
+              <TableCell align="right">id</TableCell>
+              <TableCell align="right">name</TableCell>
+              <TableCell align="right">age</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {authors.map((author) => (
+              <TableRow
+                key={author.id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell component="th" scope="row">
+                  {author.name}
+                </TableCell>
+                <TableCell align="right">{author.id}</TableCell>
+                <TableCell align="right">{author.name}</TableCell>
+                <TableCell align="right">{author.age}</TableCell>
+                <TableCell>
+                  <IconButton
+                    onClick={() => {
+                      setAuthorFromDialogStatus(true);
+                      setauthorToEdit(author);
+                    }}
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton>
+                    <DeleteIcon />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      {authorFormDialogStatus && (
+        <AuthorForm
+          open={authorFormDialogStatus}
+          author={authorToEdit}
+          closeHandler={() => {
+            setAuthorFromDialogStatus(false);
+            setauthorToEdit(null);
+          }}
+          submit={(data) => {
+            if (authorToEdit) {
+              console.log("update");
+              console.log(data);
+            } else {
+              console.log("create");
+              console.log(data);
+            }
+          }}
+        />
+      )}
+    </div>
   );
 };
 export default Authors;
