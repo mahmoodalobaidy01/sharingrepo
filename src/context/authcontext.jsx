@@ -18,6 +18,7 @@ const AuthProvider = (props) => {
   useEffect(() => {
     const user = localStorage.getItem("user");
     setUser(user);
+    setIsAuth(true);
   });
   return (
     <Authcontext.Provider value={{ login, logout, isAuth, user }}>

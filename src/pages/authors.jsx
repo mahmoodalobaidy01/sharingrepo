@@ -27,15 +27,13 @@ const Authors = () => {
 
   React.useEffect(() => {
     api
-      .get("/authors", {
-        headers: { Authorization: "Bearer " + authProvider.user.token },
-      })
+      .get("/authors")
       .then(({ data }) => {
         console.log(data, authProvider.user.token);
         setAuthors(data);
       })
       .catch((err) => {});
-  }, [author]);
+  }, []);
 
   return (
     <div>
@@ -112,19 +110,23 @@ const Authors = () => {
                 .put(`/authors/${authorToEdit.id}`, {
                   name: data.name,
                   age: data.age,
+                  email: data.email,
+                  password: data.password,
                 })
                 .then((response) => {
-                  console.log(response.data);
+                  console.log(response.data.id, 1122);
+                  let copyauthors = [...authors];
+
+                  const i = copyauthors.findIndex(
+                    (obj) => obj.id == authorToEdit.id
+                  );
+
+                  copyauthors[i] = response.data;
+                  setAuthorFormDialogStatus(false);
+                  setauthorToEdit(null);
+                  setAuthors(copyauthors);
                 })
                 .catch((error) => {});
-              let copyauthors = [...authors];
-
-              const i = copyauthors.findIndex((obj) => obj.id == data.id);
-              console.log(data);
-              console.log(copyauthors[i]);
-              copyauthors[i] = data;
-              setAuthorFormDialogStatus(false);
-              setAuthor(data);
             } else {
               console.log("create");
               api
@@ -137,20 +139,21 @@ const Authors = () => {
                 })
                 .then((response) => {
                   console.log(response.data, 125);
+                  let copyauthors = [...authors];
+                  copyauthors.push(response.data);
+                  setAuthorFormDialogStatus(false);
+                  setauthorToEdit(null);
+
+                  setAuthors(copyauthors);
                 })
                 .catch((error) => {});
-              let copyauthors = [...authors];
-
-              copyauthors.push(data);
-              setAuthorFormDialogStatus(false);
-              setAuthors(copyauthors);
             }
           }}
         />
       )}
       ,
       {authorFormDeleteDialogStatus &&
-        (console.log(authorToEdit.id),
+        (console.log(authorToEdit.id, "lalalalala"),
         (
           <AuthordeleteForm
             open={authorFormDeleteDialogStatus}
@@ -159,15 +162,22 @@ const Authors = () => {
               setauthorToEdit(null);
             }}
             submit={(data) => {
-              api
-                .delete(`/authors/${authorToEdit.id}`)
-                .then((response) => {
-                  console.log(response.data, 125);
-                })
-                .catch((error) => {});
-              setauthorFormDeleteDialogStatus(false);
-              setAuthor(authorToEdit);
+              console.log(authorToEdit.id, "nenenen");
+              // api
+              //   .delete(`/authors/${authorToEdit.id}`)
+              //   .then((response) => {
+              //     console.log(response.data, 125);
+              //   })
+              //   .catch((error) => {});
+              let copyauthors = [...authors];
+              const i = copyauthors.findIndex(
+                (obj) => obj.id == authorToEdit.id
+              );
+              copyauthors.splice(i, 1);
+              setAuthorFormDialogStatus(false);
               setauthorToEdit(null);
+              console.log(copyauthors);
+              setAuthors(copyauthors);
             }}
           />
         ))}
