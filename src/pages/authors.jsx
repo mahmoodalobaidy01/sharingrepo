@@ -19,7 +19,7 @@ const Authors = () => {
   const [authorFormDialogStatus, setAuthorFormDialogStatus] = useState(false);
   const [authorFormDeleteDialogStatus, setauthorFormDeleteDialogStatus] =
     useState(false);
-  const [authorToEdit, setauthorToEdit] = useState(undefined);
+  const [authorToEdit, setauthorToEdit] = useState(null);
   const [authors, setAuthors] = useState([]);
   const [author, setAuthor] = useState();
 
@@ -163,21 +163,20 @@ const Authors = () => {
             }}
             submit={(data) => {
               console.log(authorToEdit.id, "nenenen");
-              // api
-              //   .delete(`/authors/${authorToEdit.id}`)
-              //   .then((response) => {
-              //     console.log(response.data, 125);
-              //   })
-              //   .catch((error) => {});
-              let copyauthors = [...authors];
-              const i = copyauthors.findIndex(
-                (obj) => obj.id == authorToEdit.id
-              );
-              copyauthors.splice(i, 1);
-              setAuthorFormDialogStatus(false);
-              setauthorToEdit(null);
-              console.log(copyauthors);
-              setAuthors(copyauthors);
+              api
+                .delete(`/authors/${authorToEdit.id}`)
+                .then((response) => {
+                  console.log(response.data, 125);
+                  let copyauthors = [...authors];
+                  const i = copyauthors.findIndex(
+                    (obj) => obj.id == authorToEdit.id
+                  );
+                  copyauthors.splice(i, 1);
+                  setauthorFormDeleteDialogStatus(false);
+                  setauthorToEdit(null);
+                  setAuthors(copyauthors);
+                })
+                .catch((error) => {});
             }}
           />
         ))}
