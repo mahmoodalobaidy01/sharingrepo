@@ -1,4 +1,3 @@
-import { DataGrid } from "@mui/x-data-grid";
 import * as React from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -15,15 +14,15 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { IconButton } from "@material-ui/core";
 import Button from "@mui/material/Button";
-
-function createData(name, id, age) {
-  return { name, id, age };
-}
-
+import AuthordeleteForm from "../components/authordelete";
 const Authors = () => {
-  const [authorFormDialogStatus, setAuthorFromDialogStatus] = useState(false);
+  const [authorFormDialogStatus, setAuthorFormDialogStatus] = useState(false);
+  const [authorFormDeleteDialogStatus, setauthorFormDeleteDialogStatus] =
+    useState(false);
   const [authorToEdit, setauthorToEdit] = useState(undefined);
   const [authors, setAuthors] = useState([]);
+  const [author, setAuthor] = useState();
+
   const authProvider = useContext(Authcontext);
 
   React.useEffect(() => {
@@ -36,17 +35,18 @@ const Authors = () => {
         setAuthors(data);
       })
       .catch((err) => {});
-  }, []);
+  }, [author]);
 
   return (
     <div>
       <h1>AUTHORS</h1>
       <Button
-        color="primary"
+        color="success"
+        type="submit"
         variant="contained"
         onClick={() => {
           setauthorToEdit(null);
-          setAuthorFromDialogStatus(true);
+          setAuthorFormDialogStatus(true);
         }}
       >
         ADD AUTHOR
@@ -76,13 +76,18 @@ const Authors = () => {
                 <TableCell>
                   <IconButton
                     onClick={() => {
-                      setAuthorFromDialogStatus(true);
+                      setAuthorFormDialogStatus(true);
                       setauthorToEdit(author);
                     }}
                   >
                     <EditIcon />
                   </IconButton>
-                  <IconButton>
+                  <IconButton
+                    onClick={() => {
+                      setauthorFormDeleteDialogStatus(true);
+                      setauthorToEdit(author);
+                    }}
+                  >
                     <DeleteIcon />
                   </IconButton>
                 </TableCell>
@@ -96,20 +101,76 @@ const Authors = () => {
           open={authorFormDialogStatus}
           author={authorToEdit}
           closeHandler={() => {
-            setAuthorFromDialogStatus(false);
+            setAuthorFormDialogStatus(false);
             setauthorToEdit(null);
           }}
           submit={(data) => {
             if (authorToEdit) {
               console.log("update");
+              console.log(authorToEdit);
+              api
+                .put(`/authors/${authorToEdit.id}`, {
+                  name: data.name,
+                  age: data.age,
+                })
+                .then((response) => {
+                  console.log(response.data);
+                })
+                .catch((error) => {});
+              let copyauthors = [...authors];
+
+              const i = copyauthors.findIndex((obj) => obj.id == data.id);
               console.log(data);
+              console.log(copyauthors[i]);
+              copyauthors[i] = data;
+              setAuthorFormDialogStatus(false);
+              setAuthor(data);
             } else {
               console.log("create");
-              console.log(data);
+              api
+                .post(`/authors/`, {
+                  name: data.name,
+                  age: data.age,
+                  email: data.email,
+                  password: data.password,
+                  privilege: 0,
+                })
+                .then((response) => {
+                  console.log(response.data, 125);
+                })
+                .catch((error) => {});
+              let copyauthors = [...authors];
+
+              copyauthors.push(data);
+              setAuthorFormDialogStatus(false);
+              setAuthors(copyauthors);
             }
           }}
         />
       )}
+      ,
+      {authorFormDeleteDialogStatus &&
+        (console.log(authorToEdit.id),
+        (
+          <AuthordeleteForm
+            open={authorFormDeleteDialogStatus}
+            closeHandler={() => {
+              setauthorFormDeleteDialogStatus(false);
+              setauthorToEdit(null);
+            }}
+            submit={(data) => {
+              api
+                .delete(`/authors/${authorToEdit.id}`)
+                .then((response) => {
+                  console.log(response.data, 125);
+                })
+                .catch((error) => {});
+              setauthorFormDeleteDialogStatus(false);
+              setAuthor(authorToEdit);
+              setauthorToEdit(null);
+            }}
+          />
+        ))}
     </div>
   );
 };
