@@ -29,9 +29,8 @@ export const authorReduce = (state = initState, action) => {
       };
     case FETCHING_DATA_SUCCESSFUL:
       return {
-        ...state,
         authors: action.payload,
-        isloading: true,
+        isloading: false,
       };
     case ADD_AUTHOR:
       return {
