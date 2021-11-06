@@ -4,7 +4,6 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import { Authcontext } from "../context/authcontext";
 import api from "./api/axios";
-import { fontWeight } from "@mui/system";
 import { useHistory } from "react-router-dom";
 //import Form from "@mui/material/Form";
 
@@ -12,7 +11,7 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState([]);
-  const { isAuth, login } = useContext(Authcontext);
+  const { setIsAuth, isAuth, login } = useContext(Authcontext);
   const history = useHistory();
   const setemail = (email) => {
     setEmail(email);
@@ -34,10 +33,13 @@ const Login = () => {
         password: password,
       })
       .then((response) => {
+        console.log(response.data, "res");
         setErrors("");
         login(response.data);
-        console.log(response.data);
+        // console.log(response.data);
+
         history.push("/authors");
+        //setIsAuth(true);
       })
       .catch((error) => {});
   };
@@ -92,10 +94,6 @@ const Login = () => {
         <br />
         <br />
         <br />
-
-        <Button variant="contained" style={{ color: "primary" }} type="logout">
-          logout
-        </Button>
       </div>
       {errors && (
         <p style={{ color: "red", fontWeight: "bolder" }}>

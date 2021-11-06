@@ -33,6 +33,7 @@ const Authors = () => {
   const authProvider = useContext(Authcontext);
 
   useEffect(() => {
+    console.log(4444, state.authors);
     api
       .get("/authors")
       .then(({ data }) => {
@@ -42,7 +43,7 @@ const Authors = () => {
           type: FETCHING_DATA_SUCCESSFUL,
           payload: data,
         });
-        console.log(4444, state);
+        console.log(444555554, state.authors);
       })
       .catch((err) => {});
   }, []);
