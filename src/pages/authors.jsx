@@ -29,6 +29,7 @@ import {
 
 const Authors = () => {
   const [state, dispatch] = useReducer(authorReduce, initState);
+  const { logout } = useContext(Authcontext);
 
   const authProvider = useContext(Authcontext);
 
@@ -47,6 +48,10 @@ const Authors = () => {
       })
       .catch((err) => {});
   }, []);
+  const handleout = (e) => {
+    e.preventDefault();
+    logout();
+  };
 
   return (
     <div>
@@ -112,6 +117,9 @@ const Authors = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Button variant="contained" color="error" onClick={handleout}>
+        LOGOUT
+      </Button>
       {state.authorFormDialogStatus && (
         <AuthorForm
           open={state.authorFormDialogStatus}

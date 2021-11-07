@@ -3,7 +3,7 @@ import { Authcontext } from "./context/authcontext";
 import { Switch, Route } from "react-router-dom";
 import "./App.css";
 import { useContext } from "react";
-
+import Bookstore from "./pages/bookstore";
 import Authors from "./pages/authors";
 
 function App() {
@@ -18,14 +18,22 @@ function App() {
   ) {
     routes = <Login />;
   } else if (localStorage.getItem("isauth") == "true") {
-    //routes = <Authors />;
-    routes = (
-      <Switch>
-        <Route path="/authors">
-          <Authors />
-        </Route>
-      </Switch>
-    );
+    localStorage.getItem("isadmin") == "true"
+      ? (routes = (
+          <Switch>
+            <Route path="/authors">
+              <Authors />
+            </Route>
+          </Switch>
+        ))
+      : //routes = <Authors />;
+        (routes = (
+          <Switch>
+            <Route path="/authors">
+              <Bookstore />
+            </Route>
+          </Switch>
+        ));
   } else if (!isAuth) {
     routes = <Login />;
   }

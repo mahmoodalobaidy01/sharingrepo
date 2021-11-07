@@ -37,7 +37,9 @@ const Login = () => {
         setErrors("");
         login(response.data);
         // console.log(response.data);
-
+        if (email.endsWith("@stu.edu.iq")) {
+          localStorage.setItem("isadmin", true);
+        }
         history.push("/authors");
         //setIsAuth(true);
       })

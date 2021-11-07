@@ -19,6 +19,8 @@ const AuthProvider = (props) => {
     setIsAuth(false);
     setUser({});
     localStorage.removeItem("user");
+    localStorage.removeItem("isauth");
+    localStorage.removeItem("isadmin");
   };
   useEffect(() => {
     console.log(isAuth, 88888);
